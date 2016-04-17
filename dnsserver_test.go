@@ -25,7 +25,7 @@ func TestDNSResponse(t *testing.T) {
 	server.AddService("baz", Service{Name: "baz", Image: "bar", Ip: net.ParseIP("127.0.0.1"), Ttl: -1})
 	server.AddService("biz", Service{Name: "hey", Image: "", Ip: net.ParseIP("127.0.0.4")})
 	server.AddService("joe", Service{Name: "joe", Image: "", Ip: net.ParseIP("127.0.0.5"), Aliases: []string{"lala.docker", "super-alias", "alias.domain"}})
-
+	server.AddService("huh", Service{Name: "huh", Image: "", Ip: nil, NetworkIps: map[string]net.IP{"huh_default": net.ParseIP("127.0.0.6")}})
 	var inputs = []struct {
 		query    string
 		expected int
@@ -49,6 +49,9 @@ func TestDNSResponse(t *testing.T) {
 		{"joe.docker.", 1, "A", 0},
 		{"joe.docker.", 1, "MX", 0},
 		{"joe.docker.", 0, "AAAA", 0},
+		{"huh.docker.", 1, "A", 0},
+		{"huh.docker.", 1, "MX", 0},
+		{"huh.docker.", 0, "AAAA", 0},
 		{"super-alias.", 1, "A", 0},
 		{"super-alias.", 1, "MX", 0},
 		{"alias.domain.", 1, "A", 0},

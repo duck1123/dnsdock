@@ -74,6 +74,12 @@ func (s *DNSServer) AddService(id string, service Service) {
 	id = s.getExpandedID(id)
 	s.services[id] = &service
 
+	if service.Ip == nil {
+		for _, ip := range service.NetworkIps {
+			s.services[id].Ip = ip
+		}
+	}
+
 	for _, alias := range service.Aliases {
 		s.mux.HandleFunc(alias+".", s.handleRequest)
 	}
